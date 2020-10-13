@@ -1,4 +1,4 @@
-module gitlab.workfront.com/jonwhitaker/go-genproto
+module github.com/jon-whit/go-genproto
 
 go 1.15
 

@@ -49,7 +49,7 @@ func (c *pubsubClient) Subscribe(ctx context.Context, opts ...grpc.CallOption) (
 }
 
 type Pubsub_SubscribeClient interface {
-	Send(*CloudEventSubscriptionInput) error
+	Send(*SubscribeInput) error
 	Recv() (*CloudEvent, error)
 	grpc.ClientStream
 }
@@ -58,7 +58,7 @@ type pubsubSubscribeClient struct {
 	grpc.ClientStream
 }
 
-func (x *pubsubSubscribeClient) Send(m *CloudEventSubscriptionInput) error {
+func (x *pubsubSubscribeClient) Send(m *SubscribeInput) error {
 	return x.ClientStream.SendMsg(m)
 }
 
@@ -86,8 +86,8 @@ func (c *pubsubClient) Publish(ctx context.Context, opts ...grpc.CallOption) (Pu
 }
 
 type Pubsub_PublishClient interface {
-	Send(*PublishCloudEventInput) error
-	Recv() (*PublishCloudEventResponse, error)
+	Send(*PublishInput) error
+	Recv() (*PublishResponse, error)
 	grpc.ClientStream
 }
 
@@ -95,12 +95,12 @@ type pubsubPublishClient struct {
 	grpc.ClientStream
 }
 
-func (x *pubsubPublishClient) Send(m *PublishCloudEventInput) error {
+func (x *pubsubPublishClient) Send(m *PublishInput) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *pubsubPublishClient) Recv() (*PublishCloudEventResponse, error) {
-	m := new(PublishCloudEventResponse)
+func (x *pubsubPublishClient) Recv() (*PublishResponse, error) {
+	m := new(PublishResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -129,7 +129,7 @@ func (s *PubsubService) publish(_ interface{}, stream grpc.ServerStream) error {
 
 type Pubsub_SubscribeServer interface {
 	Send(*CloudEvent) error
-	Recv() (*CloudEventSubscriptionInput, error)
+	Recv() (*SubscribeInput, error)
 	grpc.ServerStream
 }
 
@@ -141,8 +141,8 @@ func (x *pubsubSubscribeServer) Send(m *CloudEvent) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *pubsubSubscribeServer) Recv() (*CloudEventSubscriptionInput, error) {
-	m := new(CloudEventSubscriptionInput)
+func (x *pubsubSubscribeServer) Recv() (*SubscribeInput, error) {
+	m := new(SubscribeInput)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -150,8 +150,8 @@ func (x *pubsubSubscribeServer) Recv() (*CloudEventSubscriptionInput, error) {
 }
 
 type Pubsub_PublishServer interface {
-	Send(*PublishCloudEventResponse) error
-	Recv() (*PublishCloudEventInput, error)
+	Send(*PublishResponse) error
+	Recv() (*PublishInput, error)
 	grpc.ServerStream
 }
 
@@ -159,12 +159,12 @@ type pubsubPublishServer struct {
 	grpc.ServerStream
 }
 
-func (x *pubsubPublishServer) Send(m *PublishCloudEventResponse) error {
+func (x *pubsubPublishServer) Send(m *PublishResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *pubsubPublishServer) Recv() (*PublishCloudEventInput, error) {
-	m := new(PublishCloudEventInput)
+func (x *pubsubPublishServer) Recv() (*PublishInput, error) {
+	m := new(PublishInput)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -201,7 +201,7 @@ func RegisterPubsubService(s grpc.ServiceRegistrar, srv *PubsubService) {
 				ClientStreams: true,
 			},
 		},
-		Metadata: "pubsubv1.proto",
+		Metadata: "pubsub.proto",
 	}
 
 	s.RegisterService(&sd, nil)
